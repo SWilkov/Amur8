@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Amur8</id>
+    <version>1.0.4</version>
+    <title>Amur8 custom win8 controls</title>
+    <authors>Scott Williamson</authors>
+    <owners>Scott Williamson</owners>
+    <licenseUrl>http://opensource.org/licenses/GPL-2.0</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Toolkit for Windows 8 XAML applications</description>
+    <language>en-GB</language>
+  </metadata>
+  <files>
+    <file src="bin\Release\Themes\Generic.xbf" target="lib\netcore451\Themes\Generic.xaml" />
+    <file src="bin\Release\Themes\Generic.xaml" target="lib\netcore451\Amur8.dll" />
+    <file src="bin\Release\Themes\Generic.xaml" target="lib\netcore451\Amur8.pri" />
+  </files>
+</package>

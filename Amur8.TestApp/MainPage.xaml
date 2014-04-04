@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="Amur8.TestApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Amur8.TestApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Amur8="using:Amur8.Controls.CountdownTimer"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0" Text="Amur8" FontSize="35"/>
+        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="A set of custom Windows 8 controls" FontSize="20"/>
+        </Grid>
+        
+        <StackPanel Grid.Row="1" Margin="0,50,0,0" HorizontalAlignment="Center">
+            <TextBlock Text="CountdownTimer" FontSize="20"/>
+        </StackPanel>
+        
+        <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,150,0,0">
+            <Amur8:CountdownTimer Width="350" Height="150" FontSize="30" 
+                                  EnableNotification="True"
+                                  NotificationHeading="AmurTimer"
+                                  NotificationBody="CountdownTimer has completed" 
+                                  OpenSettingsDirection="Down"
+                                  OpenSettingsDuration="1000"
+                                  CloseSettingsDuration="1200" />
+        </Grid>
+    </Grid>
+</Page>
