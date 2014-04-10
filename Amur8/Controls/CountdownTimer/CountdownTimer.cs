@@ -13,10 +13,13 @@ using Windows.UI.Xaml.Media.Animation;
 using Amur8.Animations;
 using Windows.UI.Notifications;
 using NotificationsExtensions.ToastContent;
+using Amur8.Events;
+using Amur8.Models;
+using System.ComponentModel;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
-namespace Amur8.Controls.CountdownTimer
+namespace Amur8.Controls
 {
     public enum OpeningDirection
     {
@@ -26,20 +29,20 @@ namespace Amur8.Controls.CountdownTimer
         Down
     }
 
-    [TemplatePart(Name = Constants.TIMER_GRID, Type = typeof(FrameworkElement))]
-    [TemplatePart(Name = Constants.SETTINGS_GRID, Type = typeof(FrameworkElement))]
-    [TemplatePart(Name = Constants.CLOSE_SETTINGS_BUTTON, Type = typeof(Button))]
-    [TemplatePart(Name = Constants.LEFT_GLYPH, Type = typeof(Grid))]
-    [TemplatePart(Name = Constants.RIGHT_GLYPH, Type = typeof(Grid))]
-    [TemplatePart(Name = Constants.UP_GLYPH, Type = typeof(Grid))]
-    [TemplatePart(Name = Constants.DOWN_GLYPH, Type = typeof(Grid))]
-    [TemplatePart(Name = Constants.SLIDERS_GRID, Type = typeof(Grid))]
-    [TemplatePart(Name = Constants.START_TIMER, Type = typeof(Button))]
-    [TemplatePart(Name = Constants.PAUSE_TIMER, Type = typeof(Button))]
-    [TemplatePart(Name = Constants.HOURS_SLIDER, Type = typeof(Slider))]
-    [TemplatePart(Name = Constants.MINUTES_SLIDER, Type = typeof(Slider))]
-    [TemplatePart(Name = Constants.SECONDS_SLIDER, Type = typeof(Slider))]
-    public sealed class CountdownTimer : Control
+    [TemplatePart(Name = TIMER_GRID, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = SETTINGS_GRID, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = CLOSE_SETTINGS_BUTTON, Type = typeof(Button))]
+    [TemplatePart(Name = LEFT_GLYPH, Type = typeof(Grid))]
+    [TemplatePart(Name = RIGHT_GLYPH, Type = typeof(Grid))]
+    [TemplatePart(Name = UP_GLYPH, Type = typeof(Grid))]
+    [TemplatePart(Name = DOWN_GLYPH, Type = typeof(Grid))]
+    [TemplatePart(Name = SLIDERS_GRID, Type = typeof(Grid))]
+    [TemplatePart(Name = START_TIMER, Type = typeof(Button))]
+    [TemplatePart(Name = PAUSE_TIMER, Type = typeof(Button))]
+    [TemplatePart(Name = HOURS_SLIDER, Type = typeof(Slider))]
+    [TemplatePart(Name = MINUTES_SLIDER, Type = typeof(Slider))]
+    [TemplatePart(Name = SECONDS_SLIDER, Type = typeof(Slider))]
+    public sealed class CountdownTimer : Control, INotifyPropertyChanged
     {
         #region Private fields
 
@@ -64,11 +67,73 @@ namespace Amur8.Controls.CountdownTimer
 
         private OpenCloseSettingsAnimation _openCloseAnimation;
 
-        private DispatcherTimer _timer;
-
         private ToastNotification _timerFinishedNotification;
 
         private TimeSpan _startedTime;
+
+        private int _timerIndex;
+
+        #endregion
+
+        #region constants
+
+        //Countdown Timer constants
+        public const string TIMER_GRID = "PART_TimerGrid";
+        public const string SETTINGS_GRID = "PART_SettingsGrid";
+        public const string SLIDERS_GRID = "PART_sliderGrid";
+        public const string CLOSE_SETTINGS_BUTTON = "PART_CloseSettingsButton";
+
+        //Buttons
+        public const string START_TIMER = "PART_StartButton";
+        public const string PAUSE_TIMER = "PART_PauseButton";
+
+        // default time when openning the Settings Grid
+        public const double DEFAULT_OPENCLOSE_TIME = 750;
+
+        //Settings arrow glyphs
+        public const string LEFT_GLYPH = "PART_left";
+        public const string RIGHT_GLYPH = "PART_right";
+        public const string UP_GLYPH = "PART_up";
+        public const string DOWN_GLYPH = "PART_down";
+
+        //Slider controls for hours, minutes, seconds
+        public const string HOURS_SLIDER = "PART_HoursSlider";
+        public const string MINUTES_SLIDER = "PART_MinutesSlider";
+        public const string SECONDS_SLIDER = "PART_SecondsSlider";
+
+        public const int MAX_HOURS = 12;
+
+        //Notification Defaults
+        public const string NOTIFY_HEADER = "Timer";
+        public const string NOTIFY_TEXT = "timer has finished";
+        
+        #endregion
+
+
+        private TimeDetails _timeDetails;
+        public TimeDetails TimeDetails
+        {
+            get { return _timeDetails; }
+            set
+            {
+                _timeDetails = value;
+                OnPropertyChanged("TimeDetails");
+            }
+        }
+
+        #region PropertyChanged Event
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // Create the OnPropertyChanged method to raise the event 
+        private void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
 
         #endregion
 
@@ -85,9 +150,9 @@ namespace Amur8.Controls.CountdownTimer
                 _currentGlyphGrid = SetCurrentArrowGlyph(OpenSettingsDirection);
 
                 _pauseTimer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-
-                CreateTimer();
-
+                TimeDetails = new Models.TimeDetails();
+                SetupTimer();
+               
                 if (IsSettingsOpen)
                     OpenSettings();
             };
@@ -124,7 +189,7 @@ namespace Amur8.Controls.CountdownTimer
                     new CountdownTimerEventArgs()
                     {
                         StartedTime = _startedTime,
-                        PausedTime = new TimeSpan(Hours, Minutes, Seconds)
+                        PausedTime = new TimeSpan(TimeDetails.Hours, TimeDetails.Minutes, TimeDetails.Seconds)
                     });
             }
         }
@@ -144,19 +209,16 @@ namespace Amur8.Controls.CountdownTimer
 
         #endregion
 
-        /// <summary>
-        /// Creates the timer and handles Tick event to update UI
-        /// </summary>
-        private void CreateTimer()
+
+        private void SetupTimer()
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(1000);
-            _timer.Tick += (s, args) =>
+            _timerIndex = Global.Instance.CreateTimer();
+            Global.Instance.Timers[_timerIndex].Tick += (s, args) =>
             {
-                if (Hours == 0 && Minutes == 0 && Seconds == 0)
+                if (TimeDetails.Hours == 0 && TimeDetails.Minutes == 0 && TimeDetails.Seconds == 0)
                 {
                     //Stop the timer
-                    _timer.Stop();
+                    Global.Instance.Timers[_timerIndex].Stop();
 
                     //Raise TimerFinished event
                     OnTimerFinished();
@@ -169,42 +231,42 @@ namespace Amur8.Controls.CountdownTimer
                     return;
                 }
 
-                if (Seconds == 0 && Minutes > 0)
+                if (TimeDetails.Seconds == 0 && TimeDetails.Minutes > 0)
                 {
-                    Minutes--;
-                    Seconds = 60;
+                    TimeDetails.Minutes--;
+                    TimeDetails.Seconds = 60;
                 }
 
-                if (Minutes == 0 && Hours > 0)
+                if (TimeDetails.Minutes == 0 && TimeDetails.Hours > 0)
                 {
-                    Hours--;
-                    Minutes = 59;
-                    Seconds = 60;
+                    TimeDetails.Hours--;
+                    TimeDetails.Minutes = 59;
+                    TimeDetails.Seconds = 60;
                 }
-                Seconds--;
+                TimeDetails.Seconds--;
             };
-        }
+        }       
 
         protected override void OnApplyTemplate()
         {
             #region retrieve relevant controls
 
-            _timerGrid = this.GetTemplateChild(Constants.TIMER_GRID) as Grid;
-            _settingsGrid = this.GetTemplateChild(Constants.SETTINGS_GRID) as Grid;
-            _closeSettingsButton = this.GetTemplateChild(Constants.CLOSE_SETTINGS_BUTTON) as Button;
-            _sliderGrid = this.GetTemplateChild(Constants.SLIDERS_GRID) as Grid;
+            _timerGrid = this.GetTemplateChild(TIMER_GRID) as Grid;
+            _settingsGrid = this.GetTemplateChild(SETTINGS_GRID) as Grid;
+            _closeSettingsButton = this.GetTemplateChild(CLOSE_SETTINGS_BUTTON) as Button;
+            _sliderGrid = this.GetTemplateChild(SLIDERS_GRID) as Grid;
 
-            _leftGlypgGrid = this.GetTemplateChild(Constants.LEFT_GLYPH) as Grid;
-            _rightGlypgGrid = this.GetTemplateChild(Constants.RIGHT_GLYPH) as Grid;
-            _upGlypgGrid = this.GetTemplateChild(Constants.UP_GLYPH) as Grid;
-            _downGlypgGrid = this.GetTemplateChild(Constants.DOWN_GLYPH) as Grid;
+            _leftGlypgGrid = this.GetTemplateChild(LEFT_GLYPH) as Grid;
+            _rightGlypgGrid = this.GetTemplateChild(RIGHT_GLYPH) as Grid;
+            _upGlypgGrid = this.GetTemplateChild(UP_GLYPH) as Grid;
+            _downGlypgGrid = this.GetTemplateChild(DOWN_GLYPH) as Grid;
 
-            _startTimer = this.GetTemplateChild(Constants.START_TIMER) as Button;
-            _pauseTimer = this.GetTemplateChild(Constants.PAUSE_TIMER) as Button;
+            _startTimer = this.GetTemplateChild(START_TIMER) as Button;
+            _pauseTimer = this.GetTemplateChild(PAUSE_TIMER) as Button;
 
-            _hoursSlider = this.GetTemplateChild(Constants.HOURS_SLIDER) as Slider;
-            _minutesSlider = this.GetTemplateChild(Constants.MINUTES_SLIDER) as Slider;
-            _secondsSlider = this.GetTemplateChild(Constants.SECONDS_SLIDER) as Slider;
+            _hoursSlider = this.GetTemplateChild(HOURS_SLIDER) as Slider;
+            _minutesSlider = this.GetTemplateChild(MINUTES_SLIDER) as Slider;
+            _secondsSlider = this.GetTemplateChild(SECONDS_SLIDER) as Slider;
 
             #endregion
 
@@ -230,24 +292,20 @@ namespace Amur8.Controls.CountdownTimer
                 _startTimer.Click += (s, args) =>
                 {
                     //Start the timer
-                    if (_timer != null)
+                    if (Global.Instance.Timers[_timerIndex] != null)
                     {
 
-                        if (Hours == 0 && Minutes == 0 && Seconds == 0)
+                        if (TimeDetails.Hours == 0 && TimeDetails.Minutes == 0 && TimeDetails.Seconds == 0)
                         {
                         }
                         else
                         {
                             ShowPauseButton();
-                            _startedTime = new TimeSpan(Hours, Minutes, Seconds);
-                            _timer.Start();
+                            _startedTime = new TimeSpan(TimeDetails.Hours, TimeDetails.Minutes, TimeDetails.Seconds);
+                            Global.Instance.Timers[_timerIndex].Start();
                             OnTimerStarted();
                         }
-                    }
-                    else
-                    {
-                        CreateTimer();
-                    }
+                    }                    
                 };
             }
 
@@ -255,10 +313,10 @@ namespace Amur8.Controls.CountdownTimer
             {
                 _pauseTimer.Click += (s, args) =>
                 {
-                    if (_timer != null)
+                    if (Global.Instance.Timers[_timerIndex] != null)
                     {
                         ShowStartButton();
-                        _timer.Stop();
+                        Global.Instance.Timers[_timerIndex].Stop();
                         OnTimerPaused();
                     }
                 };
@@ -272,7 +330,7 @@ namespace Amur8.Controls.CountdownTimer
             {
                 _hoursSlider.ValueChanged += (s, args) =>
                 {
-                    this.Hours = Convert.ToInt32(_hoursSlider.Value);
+                    this.TimeDetails.Hours = Convert.ToInt32(_hoursSlider.Value);
                 };
             }
 
@@ -280,7 +338,7 @@ namespace Amur8.Controls.CountdownTimer
             {
                 _minutesSlider.ValueChanged += (s, args) =>
                 {
-                    this.Minutes = Convert.ToInt32(_minutesSlider.Value);
+                    this.TimeDetails.Minutes = Convert.ToInt32(_minutesSlider.Value);
                 };
             }
 
@@ -288,7 +346,7 @@ namespace Amur8.Controls.CountdownTimer
             {
                 _secondsSlider.ValueChanged += (s, args) =>
                 {
-                    this.Seconds = Convert.ToInt32(_secondsSlider.Value);
+                    this.TimeDetails.Seconds = Convert.ToInt32(_secondsSlider.Value);
                 };
             }
             #endregion
@@ -429,40 +487,7 @@ namespace Amur8.Controls.CountdownTimer
         }
 
         #endregion
-
-        #region Dependency Properties for hours, minutes, seconds
-
-        private int Hours
-        {
-            get { return (int)GetValue(HoursProperty); }
-            set { SetValue(HoursProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for StartingHour.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty HoursProperty =
-            DependencyProperty.Register("Hours", typeof(int), typeof(CountdownTimer), new PropertyMetadata(0));
-
-        private int Minutes
-        {
-            get { return (int)GetValue(MinutesProperty); }
-            set { SetValue(MinutesProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for StartingMinute.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MinutesProperty =
-            DependencyProperty.Register("Minutes", typeof(int), typeof(CountdownTimer), new PropertyMetadata(0));
-
-        private int Seconds
-        {
-            get { return (int)GetValue(SecondsProperty); }
-            set { SetValue(SecondsProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for StartingSecond.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SecondsProperty =
-            DependencyProperty.Register("Seconds", typeof(int), typeof(CountdownTimer), new PropertyMetadata(0));
-
-        #endregion
+               
 
         #region properties for sliders (hours, minutes and seconds )
 
@@ -484,7 +509,7 @@ namespace Amur8.Controls.CountdownTimer
 
         // Using a DependencyProperty as the backing store for MaximumHours.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MaximumHoursProperty =
-            DependencyProperty.Register("MaximumHours", typeof(int), typeof(CountdownTimer), new PropertyMetadata(Constants.MAX_HOURS));
+            DependencyProperty.Register("MaximumHours", typeof(int), typeof(CountdownTimer), new PropertyMetadata(MAX_HOURS));
 
         #endregion
 
@@ -517,7 +542,7 @@ namespace Amur8.Controls.CountdownTimer
             DependencyProperty.Register("OpenSettingsDuration",
                                         typeof(double),
                                         typeof(CountdownTimer),
-                                        new PropertyMetadata(Constants.DEFAULT_OPENCLOSE_TIME));
+                                        new PropertyMetadata(DEFAULT_OPENCLOSE_TIME));
 
         public double CloseSettingsDuration
         {
@@ -530,7 +555,7 @@ namespace Amur8.Controls.CountdownTimer
             DependencyProperty.Register("CloseSettingsDuration",
                                         typeof(double),
                                         typeof(CountdownTimer),
-                                        new PropertyMetadata(Constants.DEFAULT_OPENCLOSE_TIME));
+                                        new PropertyMetadata(DEFAULT_OPENCLOSE_TIME));
         #endregion
 
         #region Notification properties & methods
@@ -560,7 +585,7 @@ namespace Amur8.Controls.CountdownTimer
             DependencyProperty.Register("NotificationHeading",
                                         typeof(string),
                                         typeof(CountdownTimer),
-                                        new PropertyMetadata(Constants.NOTIFY_HEADER));
+                                        new PropertyMetadata(NOTIFY_HEADER));
 
 
         public string NotificationBody
@@ -574,7 +599,7 @@ namespace Amur8.Controls.CountdownTimer
             DependencyProperty.Register("NotificationBody",
                                         typeof(string),
                                         typeof(CountdownTimer),
-                                        new PropertyMetadata(Constants.NOTIFY_TEXT));
+                                        new PropertyMetadata(NOTIFY_TEXT));
 
 
         private void DisplayNotification()

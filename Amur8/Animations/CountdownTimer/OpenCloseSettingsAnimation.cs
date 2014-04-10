@@ -1,4 +1,4 @@
-﻿using Amur8.Controls.CountdownTimer;
+﻿using Amur8.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +17,8 @@ namespace Amur8.Animations
     {
         #region Constants used for Storyboard.TargetProperty
 
-        private const string GLOBAL_OFFSETY = "(UIElement.Projection).(PlaneProjection.GlobalOffsetY)";
-        private const string TRANSLATEX = "(UIElement.RenderTransform).(CompositeTransform.TranslateX)";
-        private const string TRANSLATEY = "(UIElement.RenderTransform).(CompositeTransform.TranslateY)";
-        private const string SCALEX = "(UIElement.RenderTransform).(CompositeTransform.ScaleX)";
-        private const string SCALEY = "(UIElement.RenderTransform).(CompositeTransform.ScaleY)";
+        
+        public const double EXPANDED_SCALE_SIZE = 1.3;
 
         #endregion
 
@@ -83,7 +80,7 @@ namespace Amur8.Animations
             expandedAnimation.KeyFrames.Add(new EasingDoubleKeyFrame()
             {
                 KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(openDuration)),
-                Value = Constants.EXPANDED_SCALE_SIZE
+                Value = EXPANDED_SCALE_SIZE
             });
 
             Storyboard.SetTargetProperty(expandedAnimation, _currentsScale);
@@ -168,28 +165,28 @@ namespace Amur8.Animations
             switch (direction)
             {
                 case OpeningDirection.Left:
-                    _currentTranslate = TRANSLATEX;
-                    _currentsScale = SCALEY;
+                    _currentTranslate = Constants.TRANSLATEX;
+                    _currentsScale = Constants.SCALEY;
                     _currentOffset = -width;
                     break;
                 case OpeningDirection.Right:
-                    _currentTranslate = TRANSLATEX;
-                    _currentsScale = SCALEY;
+                    _currentTranslate = Constants.TRANSLATEX;
+                    _currentsScale = Constants.SCALEY;
                     _currentOffset = width;
                     break;
                 case OpeningDirection.Up:
-                    _currentTranslate = TRANSLATEY;
-                    _currentsScale = SCALEX;
+                    _currentTranslate = Constants.TRANSLATEY;
+                    _currentsScale = Constants.SCALEX;
                     _currentOffset = -height;
                     break;                  
                 case OpeningDirection.Down:
-                    _currentTranslate = TRANSLATEY;
-                    _currentsScale = SCALEX;
+                    _currentTranslate = Constants.TRANSLATEY;
+                    _currentsScale = Constants.SCALEX;
                     _currentOffset = height;
                     break;                         
                 default:
-                    _currentTranslate = TRANSLATEX;
-                    _currentsScale = SCALEY;
+                    _currentTranslate = Constants.TRANSLATEX;
+                    _currentsScale = Constants.SCALEY;
                     _currentOffset = -width;
                     break;                        
             }

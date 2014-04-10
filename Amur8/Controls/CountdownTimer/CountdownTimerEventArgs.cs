@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amur8.Controls.CountdownTimer
+namespace Amur8.Events
 {
     public class CountdownTimerEventArgs : EventArgs
     {

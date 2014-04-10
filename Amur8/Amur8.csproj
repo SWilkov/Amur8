@@ -109,10 +109,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\CountdownTimer\OpenCloseSettingsAnimation.cs" />
+    <Compile Include="Animations\FlipTile\FlipAnimation.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Controls\CountdownTimer\CountdownTimer.cs" />
     <Compile Include="Controls\CountdownTimer\CountdownTimerEventArgs.cs" />
+    <Compile Include="Controls\FlipTile\FlipTile.cs" />
     <Compile Include="Converters\AddZeroToNumberConverter.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="Models\FlipDetails.cs" />
+    <Compile Include="Models\TimeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

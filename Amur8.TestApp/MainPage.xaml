@@ -5,8 +5,11 @@
     xmlns:local="using:Amur8.TestApp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Amur8="using:Amur8.Controls.CountdownTimer"
+    xmlns:Amur8="using:Amur8.Controls"
     mc:Ignorable="d">
+	<Page.Resources>
+		
+	</Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
@@ -21,19 +24,16 @@
         <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="A set of custom Windows 8 controls" FontSize="20"/>
         </Grid>
-        
-        <StackPanel Grid.Row="1" Margin="0,50,0,0" HorizontalAlignment="Center">
-            <TextBlock Text="CountdownTimer" FontSize="20"/>
-        </StackPanel>
-        
-        <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,150,0,0">
-            <Amur8:CountdownTimer Width="350" Height="150" FontSize="30" 
-                                  EnableNotification="True"
-                                  NotificationHeading="AmurTimer"
-                                  NotificationBody="CountdownTimer has completed" 
-                                  OpenSettingsDirection="Down"
-                                  OpenSettingsDuration="1000"
-                                  CloseSettingsDuration="1200" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel  Margin="0,50,0,0" HorizontalAlignment="Center">
+                <HyperlinkButton x:Name="btnTimer" Content="CountdownTimer" FontSize="20" Foreground="White" Click="btnTimer_Click"/>
+                <HyperlinkButton x:Name="btnFlip" Content="FlipTile" FontSize="20" Foreground="White" Click="btnFlip_Click"/>
+            </StackPanel>
+           
+        </ScrollViewer>
+
+        <Grid x:Name="details" Grid.Column="1" Grid.Row="1">            
+            <Frame x:Name="PageFrame"/>
         </Grid>
     </Grid>
 </Page>
