@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Amur8.Models
 {
+    /// <summary>
+    /// Used to store hours, minutes & seconds properties in CountdownTimer.cs
+    /// </summary>
     public class TimeDetails : INotifyPropertyChanged
     {
         #region Properties for hours, minutes, seconds

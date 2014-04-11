@@ -16,6 +16,7 @@ using NotificationsExtensions.ToastContent;
 using Amur8.Events;
 using Amur8.Models;
 using System.ComponentModel;
+using Amur8.Helpers;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -71,8 +72,7 @@ namespace Amur8.Controls
 
         private TimeSpan _startedTime;
 
-        private int _timerIndex;
-
+        
         #endregion
 
         #region constants
@@ -109,15 +109,14 @@ namespace Amur8.Controls
         
         #endregion
 
-
-        private TimeDetails _timeDetails;
-        public TimeDetails TimeDetails
+        private TimeHelper _timeHelper;
+        public TimeHelper TimeHelper
         {
-            get { return _timeDetails; }
+            get { return _timeHelper; }
             set
             {
-                _timeDetails = value;
-                OnPropertyChanged("TimeDetails");
+                _timeHelper = value;
+                OnPropertyChanged("TimeHelper");
             }
         }
 
@@ -150,12 +149,34 @@ namespace Amur8.Controls
                 _currentGlyphGrid = SetCurrentArrowGlyph(OpenSettingsDirection);
 
                 _pauseTimer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                TimeDetails = new Models.TimeDetails();
-                SetupTimer();
-               
+                this.TimeHelper = TimeHelper.Instance;
+                this.TimeHelper.TimerFinishedEvent += OnTimeHelperFinished;
+
                 if (IsSettingsOpen)
                     OpenSettings();
+
+                this.TimeHelper.LoadedCount++;
             };
+
+            this.Unloaded += (s, args) =>
+            {
+                if (this.TimeHelper.LoadedCount > 1)
+                    this.TimeHelper.TimerFinishedEvent -= OnTimeHelperFinished;
+            };
+        }
+
+        #endregion
+
+        #region hook up TimeHelper events
+
+        private void OnTimeHelperFinished(object sender, EventArgs e)
+        {
+            ShowStartButton();
+            //Display Notification if EnableNotfication is true
+            if (EnableNotification)
+                DisplayNotification();
+
+            OnTimerFinished();
         }
 
         #endregion
@@ -189,7 +210,8 @@ namespace Amur8.Controls
                     new CountdownTimerEventArgs()
                     {
                         StartedTime = _startedTime,
-                        PausedTime = new TimeSpan(TimeDetails.Hours, TimeDetails.Minutes, TimeDetails.Seconds)
+                        PausedTime = new TimeSpan(this.TimeHelper.TimeDetails.Hours,
+                            this.TimeHelper.TimeDetails.Minutes, this.TimeHelper.TimeDetails.Seconds)
                     });
             }
         }
@@ -207,45 +229,7 @@ namespace Amur8.Controls
             }
         }
 
-        #endregion
-
-
-        private void SetupTimer()
-        {
-            _timerIndex = Global.Instance.CreateTimer();
-            Global.Instance.Timers[_timerIndex].Tick += (s, args) =>
-            {
-                if (TimeDetails.Hours == 0 && TimeDetails.Minutes == 0 && TimeDetails.Seconds == 0)
-                {
-                    //Stop the timer
-                    Global.Instance.Timers[_timerIndex].Stop();
-
-                    //Raise TimerFinished event
-                    OnTimerFinished();
-
-                    ShowStartButton();
-                    //Display Notification if EnableNotfication is true
-                    if (EnableNotification)
-                        DisplayNotification();
-
-                    return;
-                }
-
-                if (TimeDetails.Seconds == 0 && TimeDetails.Minutes > 0)
-                {
-                    TimeDetails.Minutes--;
-                    TimeDetails.Seconds = 60;
-                }
-
-                if (TimeDetails.Minutes == 0 && TimeDetails.Hours > 0)
-                {
-                    TimeDetails.Hours--;
-                    TimeDetails.Minutes = 59;
-                    TimeDetails.Seconds = 60;
-                }
-                TimeDetails.Seconds--;
-            };
-        }       
+        #endregion        
 
         protected override void OnApplyTemplate()
         {
@@ -291,21 +275,20 @@ namespace Amur8.Controls
             {
                 _startTimer.Click += (s, args) =>
                 {
-                    //Start the timer
-                    if (Global.Instance.Timers[_timerIndex] != null)
-                    {
+                    this.TimeHelper.StartTimer();
 
-                        if (TimeDetails.Hours == 0 && TimeDetails.Minutes == 0 && TimeDetails.Seconds == 0)
-                        {
-                        }
-                        else
-                        {
-                            ShowPauseButton();
-                            _startedTime = new TimeSpan(TimeDetails.Hours, TimeDetails.Minutes, TimeDetails.Seconds);
-                            Global.Instance.Timers[_timerIndex].Start();
-                            OnTimerStarted();
-                        }
-                    }                    
+                    if (this.TimeHelper.TimeDetails.Hours == 0 && this.TimeHelper.TimeDetails.Minutes == 0
+                        && this.TimeHelper.TimeDetails.Seconds == 0)
+                    {
+                    }
+                    else
+                    {
+                        ShowPauseButton();
+                        _startedTime = new TimeSpan(this.TimeHelper.TimeDetails.Hours, this.TimeHelper.TimeDetails.Minutes,
+                                                    this.TimeHelper.TimeDetails.Seconds);
+
+                        OnTimerStarted();
+                    }        
                 };
             }
 
@@ -313,12 +296,9 @@ namespace Amur8.Controls
             {
                 _pauseTimer.Click += (s, args) =>
                 {
-                    if (Global.Instance.Timers[_timerIndex] != null)
-                    {
-                        ShowStartButton();
-                        Global.Instance.Timers[_timerIndex].Stop();
-                        OnTimerPaused();
-                    }
+                    ShowStartButton();
+                    this.TimeHelper.PauseTimer();
+                    OnTimerPaused();   
                 };
             }
 
@@ -330,7 +310,7 @@ namespace Amur8.Controls
             {
                 _hoursSlider.ValueChanged += (s, args) =>
                 {
-                    this.TimeDetails.Hours = Convert.ToInt32(_hoursSlider.Value);
+                    this.TimeHelper.TimeDetails.Hours = Convert.ToInt32(_hoursSlider.Value);
                 };
             }
 
@@ -338,7 +318,7 @@ namespace Amur8.Controls
             {
                 _minutesSlider.ValueChanged += (s, args) =>
                 {
-                    this.TimeDetails.Minutes = Convert.ToInt32(_minutesSlider.Value);
+                    this.TimeHelper.TimeDetails.Minutes = Convert.ToInt32(_minutesSlider.Value);
                 };
             }
 
@@ -346,7 +326,7 @@ namespace Amur8.Controls
             {
                 _secondsSlider.ValueChanged += (s, args) =>
                 {
-                    this.TimeDetails.Seconds = Convert.ToInt32(_secondsSlider.Value);
+                    this.TimeHelper.TimeDetails.Seconds = Convert.ToInt32(_secondsSlider.Value);
                 };
             }
             #endregion

@@ -17,12 +17,6 @@
                                   OpenSettingsDirection="Down"
                                   OpenSettingsDuration="1000"
                                   CloseSettingsDuration="1200" />
-            
-            <Amur8:CountdownTimer Width="220" Height="100" FontSize="20"
-                                  EnableNotification="False"
-                                  OpenSettingsDirection="Left"
-                                  Background="#FF292640"
-                                  Margin="0,200,0,0" />
         </StackPanel>
     </Grid>
 </Page>

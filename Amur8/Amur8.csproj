@@ -115,7 +115,7 @@
     <Compile Include="Controls\CountdownTimer\CountdownTimerEventArgs.cs" />
     <Compile Include="Controls\FlipTile\FlipTile.cs" />
     <Compile Include="Converters\AddZeroToNumberConverter.cs" />
-    <Compile Include="Global.cs" />
+    <Compile Include="Helpers\TimeHelper.cs" />
     <Compile Include="Models\FlipDetails.cs" />
     <Compile Include="Models\TimeDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
