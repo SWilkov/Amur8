@@ -6,8 +6,10 @@ A toolkit of custom controls for Windows 8 XAML applications
 ##Included
 
 * CountdownTimer - An hours, minutes, seconds countdown timer that is adjustable using sliders and can notify on timer    completed
+* FlipTile - A live tile which flips between Front and Back content
 * AddZeroToNumberConverter - If the integer is below 10 will add a proceeding zero
 * CountdownTimerEventArgs - Used in TimerPaused, TimerStarted, TimerFinished events to hold start time, pause time
+* Amur8 Test App - Test the controls
 
 ###CountdownTimer Properties (**Defaults in bold**)
 
