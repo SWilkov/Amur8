@@ -394,9 +394,7 @@
                 <ControlTemplate TargetType="local:FlipTile">
                     <Grid Width="{TemplateBinding Width}" IsTapEnabled="True"
                           Height="{TemplateBinding Height}">
-                        <Grid.Projection>
-                            <PlaneProjection />
-                        </Grid.Projection>
+                        
                         <Border x:Name="PART_Front" BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{Binding Path=EmptyContentBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}">
@@ -411,7 +409,7 @@
                             </ContentPresenter>
                         </Border>
                         <Border x:Name="PART_Back" BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" Visibility="Collapsed" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
                                 Background="{Binding Path=EmptyContentBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                             <ContentPresenter  
                                           Width="{Binding Width, RelativeSource={RelativeSource Mode=TemplatedParent}}"

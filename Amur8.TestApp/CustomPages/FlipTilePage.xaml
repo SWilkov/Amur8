@@ -47,7 +47,7 @@
             </Amur8:FlipTile.BackContent>
         </Amur8:FlipTile>
         <Amur8:FlipTile Width="200" Height="200" Grid.Column="1" BorderBrush="White" BorderThickness="2"
-                        IsRandomFlip="True" FlipTime="750" MinimumFlipTime="2000" MaximumFlipTime="7000">
+                        IsRandomFlip="True" FlipTime="750" MinimumFlipTime="2000" MaximumFlipTime="7000" Direction="Up">
             <Amur8:FlipTile.FrontContent>
                 <Grid Background="#FF0073FF">
                     <TextBlock Text="Front Content" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -61,7 +61,7 @@
                 </Grid>
             </Amur8:FlipTile.BackContent>
         </Amur8:FlipTile>
-        <Amur8:FlipTile Width="200" Height="250" DataContext="{Binding Tiles[1]}" Grid.Row="1" 
+        <Amur8:FlipTile Width="200" Height="250" DataContext="{Binding Tiles[1]}" Grid.Row="1" Direction="Right" 
                         IsRandomFlip="False"
                         TimeBetweenFlips="4000">
             <Amur8:FlipTile.FrontContent>
@@ -81,6 +81,15 @@
                     </Grid.RowDefinitions>
                     <TextBlock Text="{Binding Name}" Grid.Row="1" FontSize="25" TextWrapping="Wrap" Margin="10"></TextBlock>
                 </Grid>
+            </Amur8:FlipTile.BackContent>
+        </Amur8:FlipTile>
+        
+        <Amur8:FlipTile Width="200" Height="200" Grid.Row="1" Grid.Column="1">
+            <Amur8:FlipTile.FrontContent>
+                <Grid Background="Red"></Grid>
+            </Amur8:FlipTile.FrontContent>
+            <Amur8:FlipTile.BackContent>
+                <Grid Background="Green"></Grid>
             </Amur8:FlipTile.BackContent>
         </Amur8:FlipTile>
     </Grid>

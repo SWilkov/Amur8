@@ -60,12 +60,13 @@ namespace Amur8.Controls
 
             this.Loaded += (s, args) =>
             {
-                _flipAnimation = new FlipTileAnimation();
+                ValidateFlipTime();
+                _flipAnimation = new FlipTileAnimation(FrontContentPresenter, BackContentPresenter,
+                                                        FlipTime, _flipDetails);
+
                 //use a seed to randomise the number
                 var randomSeed = (Int32)Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-                _random = new Random(randomSeed);
-
-                ValidateFlipTime();
+                _random = new Random(randomSeed);                
 
                 if (_timer != null)
                 {
@@ -83,6 +84,10 @@ namespace Amur8.Controls
                 if (_timer != null)
                 {
                     _timer.Stop();
+                    _flipAnimation.sbOpenBack.Stop();
+                    _flipAnimation.sbOpenFront.Stop();
+                    _flipAnimation.sbCloseFront.Stop();
+                    _flipAnimation.sbCloseBack.Stop();
                 }
             };
 
@@ -284,25 +289,17 @@ namespace Amur8.Controls
 
             _timer.Tick += (s, args) =>
             {
-                //Create the storyboard 
-                var sb = _flipAnimation.GetStoryboard(FrontContentPresenter, BackContentPresenter,
-                                                       _flipDetails, IsFront, FlipTime);
-
-                //Its random so we need a random time between min and max
-                if (IsRandomFlip)
-                    _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(MinimumFlipTime, MaximumFlipTime));
-
-                sb.Completed += (sender, e) =>
+                if (IsFront)
                 {
-                    if (IsFront)
-                        IsFront = false;
-                    else
-                        IsFront = true;
-                };
-
-                sb.Begin();
+                    _flipAnimation.sbCloseFront.Begin();
+                    this.IsFront = false;
+                }
+                else
+                {
+                    _flipAnimation.sbCloseBack.Begin();
+                    this.IsFront = true;
+                }
             };
-
         }
 
         /// <summary>

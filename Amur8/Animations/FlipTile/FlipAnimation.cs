@@ -15,59 +15,91 @@ namespace Amur8.Animations
     public class FlipTileAnimation
     {
 
-        public Storyboard GetStoryboard(FrameworkElement FrontContent, FrameworkElement BackContent,
-                                        FlipDetails flipDetails, bool isFront, double flipTime)
+        public Storyboard sbOpenFront;
+        public Storyboard sbCloseFront;
+        public Storyboard sbOpenBack;
+        public Storyboard sbCloseBack;
+        
+        private double _animationSpeed;
+        private FlipDetails _flipDetails;
+
+        private FrameworkElement _frontContent;
+        private FrameworkElement _backContent;
+
+
+        public FlipTileAnimation()
         {
-            var sb = new Storyboard();
-            var animationSpeed = flipTime / 2;
-            var duration = new Duration(TimeSpan.FromMilliseconds(animationSpeed));
-            FrameworkElement item1;
-            FrameworkElement item2;
 
-            if (isFront)
-            {
-                item1 = FrontContent;
-                item2 = BackContent;
-            }
-            else
-            {
-                item1 = BackContent;
-                item2 = FrontContent;
-            }
-
-            var animation = new DoubleAnimation()
-            {
-                Duration = duration,
-                To = flipDetails.FrontAnimationTo
-            };
-            Storyboard.SetTargetProperty(animation, flipDetails.RotationAxis);
-            Storyboard.SetTarget(animation, item1);
-            sb.Children.Add(animation);
-
-            var d = new DiscreteObjectKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(animationSpeed)), Value = Visibility.Collapsed };
-            var hideGrid = new ObjectAnimationUsingKeyFrames();
-            hideGrid.KeyFrames.Add(d);
-            Storyboard.SetTargetProperty(hideGrid, Constants.VISIBLITY);
-            Storyboard.SetTarget(hideGrid, item1);
-            sb.Children.Add(hideGrid);
-
-            var d2 = new DiscreteObjectKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(animationSpeed)), Value = Visibility.Visible };
-            var hideGrid2 = new ObjectAnimationUsingKeyFrames();
-            hideGrid2.KeyFrames.Add(d2);
-            Storyboard.SetTargetProperty(hideGrid2, Constants.VISIBLITY);
-            Storyboard.SetTarget(hideGrid2, item2);
-            sb.Children.Add(hideGrid2);
-
-            var animation2 = new DoubleAnimationUsingKeyFrames();
-            var ease1 = new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(animationSpeed)), Value = flipDetails.BackAnimationTo };
-            var ease2 = new EasingDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(flipTime)), Value = 0 };
-            animation2.KeyFrames.Add(ease1);
-            animation2.KeyFrames.Add(ease2);
-            Storyboard.SetTargetProperty(animation2, flipDetails.RotationAxis);
-            Storyboard.SetTarget(animation2, item2);
-            sb.Children.Add(animation2);
-
-            return sb;
         }
+
+        public FlipTileAnimation(FrameworkElement frontContent, FrameworkElement backContent,
+                                    double flipTime, FlipDetails flipDetails)
+        {
+            _animationSpeed = flipTime / 2;
+            _frontContent = frontContent;
+            _backContent = backContent;
+            _flipDetails = flipDetails;
+
+            CreateStoryboards();
+        }
+
+        private void CreateStoryboards()
+        {
+            sbCloseFront = new Storyboard();
+            var closeFrontAnimation = new DoubleAnimation()
+            {
+                To = _flipDetails.FrontAnimationTo,
+                EnableDependentAnimation = true,
+                Duration = new Duration(TimeSpan.FromMilliseconds(_animationSpeed)),
+                From = 1
+            };
+            Storyboard.SetTarget(closeFrontAnimation, _frontContent);
+            Storyboard.SetTargetProperty(closeFrontAnimation, _flipDetails.RotationAxis);
+            sbCloseFront.Children.Add(closeFrontAnimation);
+            sbCloseFront.Completed += (s, args) =>
+                {
+                    sbOpenBack.Begin();
+                };
+
+            sbOpenBack = new Storyboard();
+            var openBackAnimation = new DoubleAnimation()
+            {
+                To = 0,
+                EnableDependentAnimation = true,
+                Duration = new Duration(TimeSpan.FromMilliseconds(_animationSpeed)),
+                From = _flipDetails.BackAnimationTo
+            };
+            Storyboard.SetTarget(openBackAnimation, _backContent);
+            Storyboard.SetTargetProperty(openBackAnimation, _flipDetails.RotationAxis);
+            sbOpenBack.Children.Add(openBackAnimation);
+            
+            sbCloseBack = new Storyboard();
+            var closeBackAnimation = new DoubleAnimation()
+            {
+                To = _flipDetails.BackAnimationTo,
+                EnableDependentAnimation = true,
+                Duration = new Duration(TimeSpan.FromMilliseconds(_animationSpeed)),
+                From = 1
+            };
+            Storyboard.SetTarget(closeBackAnimation, _backContent);
+            Storyboard.SetTargetProperty(closeBackAnimation, _flipDetails.RotationAxis);
+            sbCloseBack.Children.Add(closeBackAnimation);
+            sbCloseBack.Completed += (s, args) =>
+            {
+                sbOpenFront.Begin();
+            };
+
+            sbOpenFront = new Storyboard();
+            var openFrontAnimation = new DoubleAnimation()
+            {
+                To = 0,
+                EnableDependentAnimation = true,
+                Duration = new Duration(TimeSpan.FromMilliseconds(_animationSpeed)),
+                From = _flipDetails.FrontAnimationTo
+            };
+            Storyboard.SetTarget(openFrontAnimation, _frontContent);
+            Storyboard.SetTargetProperty(openFrontAnimation, _flipDetails.RotationAxis);
+            sbOpenFront.Children.Add(openFrontAnimation);
+        } 
     }
 }
