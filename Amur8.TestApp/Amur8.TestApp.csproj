@@ -118,6 +118,9 @@
     <Compile Include="CustomPages\FlipTilePage.xaml.cs">
       <DependentUpon>FlipTilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomPages\RollOverTilePage.xaml.cs">
+      <DependentUpon>RollOverTilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomPages\FlipTilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomPages\RollOverTilePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

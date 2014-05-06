@@ -422,4 +422,33 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:RollOverTile">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RollOverTile">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <StackPanel x:Name="PART_MainPanel" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                            <Grid x:Name="PART_FrontGrid" Canvas.ZIndex="10" Opacity="0"
+                                  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="PART_FrontTransform" Y="0" X="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter Content="{TemplateBinding FrontContent}"
+                                                  DataContext="{x:Null}" />
+                            </Grid>
+                            <Grid x:Name="PART_BackGrid" Canvas.ZIndex="1"
+                                  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="PART_BackTransform" Y="0" X="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter Content="{TemplateBinding BackContent}"
+                                                  DataContext="{x:Null}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

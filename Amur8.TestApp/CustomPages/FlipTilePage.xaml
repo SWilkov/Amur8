@@ -87,10 +87,7 @@
         <Amur8:FlipTile Width="200" Height="200" Grid.Row="1" Grid.Column="1">
             <Amur8:FlipTile.FrontContent>
                 <Grid Background="Red"></Grid>
-            </Amur8:FlipTile.FrontContent>
-            <Amur8:FlipTile.BackContent>
-                <Grid Background="Green"></Grid>
-            </Amur8:FlipTile.BackContent>
+            </Amur8:FlipTile.FrontContent>           
         </Amur8:FlipTile>
     </Grid>
 </Page>

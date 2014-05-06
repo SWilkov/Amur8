@@ -28,6 +28,7 @@
             <StackPanel  Margin="0,50,0,0" HorizontalAlignment="Center">
                 <HyperlinkButton x:Name="btnTimer" Content="CountdownTimer" FontSize="20" Foreground="White" Click="btnTimer_Click"/>
                 <HyperlinkButton x:Name="btnFlip" Content="FlipTile" FontSize="20" Foreground="White" Click="btnFlip_Click"/>
+                <HyperlinkButton x:Name="btnRollOver" Content="RollOverTile" FontSize="20" Foreground="White" Click="btnRollOver_Click"/>
             </StackPanel>
            
         </ScrollViewer>

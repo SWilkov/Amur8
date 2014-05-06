@@ -40,7 +40,8 @@ namespace Amur8.TestApp
                     CustomPages = new List<CustomPage>()
                     {
                         new CustomPage() { Title = "Countdown Timer", PageType = typeof(CustomPages.CountdownTimerPage), Description = "A versatile custom timer control" },
-                        new CustomPage() { Title = "Flip Tile", PageType = typeof(CustomPages.FlipTilePage), Description = "Rotates the tile on user defined direction and time" }
+                        new CustomPage() { Title = "Flip Tile", PageType = typeof(CustomPages.FlipTilePage), Description = "Rotates the tile on user defined direction and time" },
+                        new CustomPage() { Title = "Slide Tile", PageType = typeof(CustomPages.RollOverTilePage), Description = "Slides the tile using linear or spline animations" }
                     };
 
                     this.DataContext = CustomPages;
@@ -63,7 +64,10 @@ namespace Amur8.TestApp
         {
             this.PageFrame.Navigate(typeof(CustomPages.CountdownTimerPage));
         }
-    }
 
-    
+        private void btnRollOver_Click(object sender, RoutedEventArgs e)
+        {
+            this.PageFrame.Navigate(typeof(CustomPages.RollOverTilePage));
+        }
+    }    
 }
