@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -81,6 +82,12 @@ namespace Amur8.Controls
                 {
                     if (_timer != null)
                         _timer.Stop();
+                };
+
+            Tapped += (s, args) =>
+                {
+                    if (Command != null && Command.CanExecute(CommandParameter))
+                        Command.Execute(CommandParameter);
                 };
         }
 
@@ -173,6 +180,30 @@ namespace Amur8.Controls
         }
                 
         #region Dependency Properties
+
+        public static DependencyProperty CommandProperty =
+                    DependencyProperty.Register("Command", typeof(ICommand), typeof(RollOverTile),
+                                                    new PropertyMetadata(null));
+
+        /// <summary>
+        /// Command uses the Tap Event to enable binding to command in ViewModel
+        /// </summary>
+        public ICommand Command
+        {
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
+        }
+
+        public static DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register("CommandParameter", typeof(object), typeof(RollOverTile),
+            new PropertyMetadata(null));
+
+
+        public object CommandParameter
+        {
+            get { return (object)GetValue(CommandParameterProperty); }
+            set { SetValue(CommandParameterProperty, value); }
+        }
 
         public IRollOverAnimation TileAnimation
         {
