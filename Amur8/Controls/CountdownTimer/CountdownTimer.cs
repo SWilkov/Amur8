@@ -404,7 +404,7 @@ namespace Amur8.Controls
         private void OpenSettings()
         {
             var sb = _openCloseAnimation.GetOpenStoryboard(_sliderGrid, _currentGlyphGrid, OpenSettingsDirection, OpenSettingsDuration,
-                                                           _settingsGrid.Width, _settingsGrid.Height);
+                                                           _settingsGrid.ActualWidth, _settingsGrid.ActualHeight);
 
             sb.Completed += (s, args) =>
             {
