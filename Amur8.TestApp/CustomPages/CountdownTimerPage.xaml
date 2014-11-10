@@ -22,7 +22,7 @@
                                   NotificationBody="CountdownTimer has completed" 
                                   OpenSettingsDirection="Down"
                                   OpenSettingsDuration="1000"
-                                  CloseSettingsDuration="1200" />
+                                  CloseSettingsDuration="1200" IsSlider="False"/>
         </Grid>
     </Grid>
 </Page>

@@ -38,7 +38,7 @@ namespace Amur8.Animations
         /// <param name="direction">user defined direction control opens</param>
         /// <param name="closeDuration">user defined opening time of settings grid</param>
         /// <returns></returns>
-        public Storyboard GetOpenStoryboard(Grid sliderGrid, Grid arrowGlyph,
+        public Storyboard GetOpenStoryboard(Grid currentGrid, Grid arrowGlyph,
                                             OpeningDirection direction, double openDuration,
                                             double width, double height)
         {
@@ -68,7 +68,7 @@ namespace Amur8.Animations
                 Duration = duration
             };
             Storyboard.SetTargetProperty(animation2, _currentTranslate);
-            Storyboard.SetTarget(animation2, sliderGrid);
+            Storyboard.SetTarget(animation2, currentGrid);
             sb.Children.Add(animation2);
 
             var expandedAnimation = new DoubleAnimationUsingKeyFrames();
@@ -84,7 +84,7 @@ namespace Amur8.Animations
             });
 
             Storyboard.SetTargetProperty(expandedAnimation, _currentsScale);
-            Storyboard.SetTarget(expandedAnimation, sliderGrid);
+            Storyboard.SetTarget(expandedAnimation, currentGrid);
             sb.Children.Add(expandedAnimation);
             return sb;
         }
@@ -97,7 +97,7 @@ namespace Amur8.Animations
         /// <param name="direction">user defined direction control opens</param>
         /// <param name="closeDuration">user defined closing time of settings grid</param>
         /// <returns></returns>
-        public Storyboard GetCloseStoryboard(Grid sliderGrid, Grid arrowGlyph,
+        public Storyboard GetCloseStoryboard(Grid currentGrid, Grid arrowGlyph,
                                             OpeningDirection direction, double closeDuration)
         {
             //offset is 0 as we are closing the grids
@@ -117,7 +117,7 @@ namespace Amur8.Animations
                 Duration = duration
             };
             Storyboard.SetTargetProperty(animation, _currentsScale);
-            Storyboard.SetTarget(animation, sliderGrid);
+            Storyboard.SetTarget(animation, currentGrid);
             sb.Children.Add(animation);
 
             var expandedAnimation = new DoubleAnimationUsingKeyFrames();
@@ -148,7 +148,7 @@ namespace Amur8.Animations
                 Value = returnOffset
             });
             Storyboard.SetTargetProperty(expandedAnimation2, _currentTranslate);
-            Storyboard.SetTarget(expandedAnimation2, sliderGrid);
+            Storyboard.SetTarget(expandedAnimation2, currentGrid);
             sb.Children.Add(expandedAnimation2);
 
             return sb;
