@@ -130,7 +130,7 @@ namespace Amur8.Controls
         public const string NOTIFY_HEADER = "Timer";
         public const string NOTIFY_TEXT = "timer has finished";
 
-        private int[] _hours = new int[] { 0, 1, 2, 3, 5, 6 };
+        private int[] _hours = new int[] { 0, 1, 2, 3, 4, 5, 6 };
         public int[] Hours
         {
             get { return _hours; }

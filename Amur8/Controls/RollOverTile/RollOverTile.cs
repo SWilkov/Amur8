@@ -58,7 +58,9 @@ namespace Amur8.Controls
             this.DefaultStyleKey = typeof(RollOverTile);
 
             Loaded += (s, args) =>
-                {                   
+                {  
+                                SetDefaultPositions(Direction);
+
                     //use a seed to randomise the number
                     var randomSeed = (Int32)Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
                     _random = new Random(randomSeed);
@@ -97,9 +99,7 @@ namespace Amur8.Controls
             _frontGrid = this.GetTemplateChild(FRONT_GRID) as Grid;
             _backGrid = this.GetTemplateChild(BACK_GRID) as Grid;
             _frontTransform = this.GetTemplateChild(FRONT_TRANSFORM) as TranslateTransform;
-            _backTransform = this.GetTemplateChild(BACK_TRANSFORM) as TranslateTransform;
-           
-            SetDefaultPositions(Direction);
+            _backTransform = this.GetTemplateChild(BACK_TRANSFORM) as TranslateTransform;  
             
         }
 
@@ -146,18 +146,31 @@ namespace Amur8.Controls
             if (IsRandomTime)
                 _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(MinTimeBetweenSlides, MaxTimeBetweenSlides));
             else
-                _timer.Interval = TimeSpan.FromMilliseconds(TimeBetweenSlides);
+            {
+                if (IsCustomTime)
+                    _timer.Interval = TimeSpan.FromMilliseconds(BackTimeBetweenSlides);
+                else
+                    _timer.Interval = TimeSpan.FromMilliseconds(TimeBetweenSlides);
+            }           
 
             _timer.Tick += (s, args) =>
-            {
+            {                
                 var sb = TileAnimation.GetStoryboard(_akf, _frontGrid, _frontTransform, 
                                                         SlideTime, Direction, IsFront);
                 sb.Completed += (sender, e) =>
                     {
                         if (IsFront)
-                            this.IsFront = false;                      
+                        {
+                            this.IsFront = false;
+                            if (IsCustomTime)
+                                _timer.Interval = TimeSpan.FromMilliseconds(BackTimeBetweenSlides);
+                        }
                         else
+                        {
                             this.IsFront = true;
+                            if (IsCustomTime)
+                                _timer.Interval = TimeSpan.FromMilliseconds(FrontTimeBetweenSlides);
+                        }
                     };
 
                 sb.Begin();
@@ -176,6 +189,14 @@ namespace Amur8.Controls
             {
                 if (SlideTime >= MinTimeBetweenSlides)
                     SlideTime = MinTimeBetweenSlides - 1000;
+            }
+
+            if (IsCustomTime)
+            {
+                if (SlideTime >= FrontTimeBetweenSlides)
+                    FrontTimeBetweenSlides = SlideTime + 1000;
+                if (SlideTime >= BackTimeBetweenSlides)
+                    BackTimeBetweenSlides = SlideTime + 1000;
             }
         }
                 
@@ -258,6 +279,8 @@ namespace Amur8.Controls
                                         typeof(RollOverTile), 
                                         new PropertyMetadata(SlideDirection.UpToDown));
 
+        #region Time properties for slides (time between slide animations, animation time)
+        
         public double SlideTime
         {
             get { return (double)GetValue(SlideTimeProperty); }
@@ -284,6 +307,40 @@ namespace Amur8.Controls
                                         typeof(double),
                                         typeof(RollOverTile),
                                         new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
+
+
+
+        public bool IsCustomTime
+        {
+            get { return (bool)GetValue(IsCustomTimeProperty); }
+            set { SetValue(IsCustomTimeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsCustomTime.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsCustomTimeProperty =
+            DependencyProperty.Register("IsCustomTime", typeof(bool), typeof(RollOverTile), new PropertyMetadata(false));
+
+        public double FrontTimeBetweenSlides
+        {
+            get { return (double)GetValue(FrontTimeBetweenSlidesProperty); }
+            set { SetValue(FrontTimeBetweenSlidesProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for FrontSlideTime.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FrontTimeBetweenSlidesProperty =
+            DependencyProperty.Register("FrontTimeBetweenSlides", typeof(double), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
+
+
+        public double BackTimeBetweenSlides
+        {
+            get { return (double)GetValue(BackTimeBetweenSlidesProperty); }
+            set { SetValue(BackTimeBetweenSlidesProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for BackTimeBetweenSlides.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty BackTimeBetweenSlidesProperty =
+            DependencyProperty.Register("BackTimeBetweenSlides", typeof(double), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
+    
 
         public bool IsRandomTime
         {
@@ -322,7 +379,8 @@ namespace Amur8.Controls
             DependencyProperty.Register("MaxTimeBetweenSlides", 
                                         typeof(int),
                                         typeof(RollOverTile),
-                                        new PropertyMetadata(DEF_MAX_SLIDETIME));    
+                                        new PropertyMetadata(DEF_MAX_SLIDETIME));
+        #endregion
 
         #endregion
     }

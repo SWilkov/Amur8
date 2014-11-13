@@ -50,7 +50,11 @@
             </Amur8:RollOverTile.TileAnimation>
         </Amur8:RollOverTile>
 
-        <Amur8:RollOverTile Width="300" Height="250" DataContext="{Binding Tiles[1]}" Grid.Column="1">
+        <Amur8:RollOverTile x:Name="Oggy" Height="250" Width="300" DataContext="{Binding Tiles[1]}" Grid.Column="1"
+                            IsCustomTime="True"
+                            FrontTimeBetweenSlides="15000"
+                            BackTimeBetweenSlides="5000"
+                           >
             <Amur8:RollOverTile.FrontContent>
                 <Grid>                    
                     <Image Stretch="UniformToFill">
