@@ -26,9 +26,10 @@
         </Grid>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel  Margin="0,50,0,0" HorizontalAlignment="Center">
-                <HyperlinkButton x:Name="btnTimer" Content="CountdownTimer" FontSize="20" Foreground="White" Click="btnTimer_Click"/>
-                <HyperlinkButton x:Name="btnFlip" Content="FlipTile" FontSize="20" Foreground="White" Click="btnFlip_Click"/>
-                <HyperlinkButton x:Name="btnRollOver" Content="RollOverTile" FontSize="20" Foreground="White" Click="btnRollOver_Click"/>
+                <HyperlinkButton x:Name="btnTimer" Content="Countdown Timer" FontSize="20" Foreground="White" Click="btnTimer_Click"/>
+                <HyperlinkButton x:Name="btnFlip" Content="Flip Tile" FontSize="20" Foreground="White" Click="btnFlip_Click"/>
+                <HyperlinkButton x:Name="btnRollOver" Content="RollOver Tile" FontSize="20" Foreground="White" Click="btnRollOver_Click"/>
+                <HyperlinkButton x:Name="btnMovingImage" Content="Moving Image Button" FontSize="20" Foreground="White" Click="btnMovingImage_Click" />
             </StackPanel>
            
         </ScrollViewer>

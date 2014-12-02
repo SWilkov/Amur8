@@ -16,5 +16,17 @@ namespace Amur8
         public const string ROTATIONY = "(UIElement.Projection).(PlaneProjection.RotationY)";
         public const string ROTATIONX = "(UIElement.Projection).(PlaneProjection.RotationX)";
         public const string VISIBLITY = "(UIElement.Visibility)";
+
+        public const double SLOW_SPEED_A = 30;
+        public const double SLOW_SPEED_B = 60;
+        public const double SLOW_SPEED_C = 90;
+
+        public const double MEDIUM_SPEED_A = 20;
+        public const double MEDIUM_SPEED_B = 40;
+        public const double MEDIUM_SPEED_C = 60;
+
+        public const double FAST_SPEED_A = 10;
+        public const double FAST_SPEED_B = 20;
+        public const double FAST_SPEED_C = 30;
     }
 }

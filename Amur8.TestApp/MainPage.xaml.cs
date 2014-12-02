@@ -69,5 +69,10 @@ namespace Amur8.TestApp
         {
             this.PageFrame.Navigate(typeof(CustomPages.RollOverTilePage));
         }
+
+        private void btnMovingImage_Click(object sender, RoutedEventArgs e)
+        {
+            this.PageFrame.Navigate(typeof(CustomPages.MovingImageButtonPage));
+        }
     }    
 }

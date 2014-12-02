@@ -143,15 +143,38 @@ namespace Amur8.Controls
 
             //If IsRandomSlide then use the min and max slidetimes to get a random time
             //Otherwise just use TimeBetweenSlides
-            if (IsRandomTime)
-                _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(MinTimeBetweenSlides, MaxTimeBetweenSlides));
+            if (IsCustomTime)
+            {
+                if (IsRandomTime)
+                {
+                    int maxCustomTime = 0;
+                    int minCustomTime = 0;
+                    if (FrontTimeBetweenSlides > BackTimeBetweenSlides)
+                    {
+                        maxCustomTime = FrontTimeBetweenSlides;
+                        minCustomTime = BackTimeBetweenSlides;
+                        _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(minCustomTime, maxCustomTime));
+                    }
+                    else if (BackTimeBetweenSlides > FrontTimeBetweenSlides)
+                    {
+                        maxCustomTime = BackTimeBetweenSlides;
+                        minCustomTime = FrontTimeBetweenSlides;
+                        _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(minCustomTime, maxCustomTime));
+                    }
+                    else if (FrontTimeBetweenSlides == BackTimeBetweenSlides)
+                    {
+                        _timer.Interval = TimeSpan.FromMilliseconds(FrontTimeBetweenSlides);
+                    }                   
+                }
+            }
             else
             {
-                if (IsCustomTime)
-                    _timer.Interval = TimeSpan.FromMilliseconds(BackTimeBetweenSlides);
+                if (IsRandomTime)
+                   _timer.Interval = TimeSpan.FromMilliseconds(_random.Next(MinTimeBetweenSlides, MaxTimeBetweenSlides));
                 else
-                    _timer.Interval = TimeSpan.FromMilliseconds(TimeBetweenSlides);
-            }           
+                   _timer.Interval = TimeSpan.FromMilliseconds(TimeBetweenSlides);
+            }
+                             
 
             _timer.Tick += (s, args) =>
             {                
@@ -194,9 +217,9 @@ namespace Amur8.Controls
             if (IsCustomTime)
             {
                 if (SlideTime >= FrontTimeBetweenSlides)
-                    FrontTimeBetweenSlides = SlideTime + 1000;
+                    FrontTimeBetweenSlides = Convert.ToInt32(SlideTime) + 1000;
                 if (SlideTime >= BackTimeBetweenSlides)
-                    BackTimeBetweenSlides = SlideTime + 1000;
+                    BackTimeBetweenSlides = Convert.ToInt32(SlideTime) + 1000;
             }
         }
                 
@@ -320,26 +343,26 @@ namespace Amur8.Controls
         public static readonly DependencyProperty IsCustomTimeProperty =
             DependencyProperty.Register("IsCustomTime", typeof(bool), typeof(RollOverTile), new PropertyMetadata(false));
 
-        public double FrontTimeBetweenSlides
+        public int FrontTimeBetweenSlides
         {
-            get { return (double)GetValue(FrontTimeBetweenSlidesProperty); }
+            get { return (int)GetValue(FrontTimeBetweenSlidesProperty); }
             set { SetValue(FrontTimeBetweenSlidesProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for FrontSlideTime.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FrontTimeBetweenSlidesProperty =
-            DependencyProperty.Register("FrontTimeBetweenSlides", typeof(double), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
+            DependencyProperty.Register("FrontTimeBetweenSlides", typeof(int), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
 
 
-        public double BackTimeBetweenSlides
+        public int BackTimeBetweenSlides
         {
-            get { return (double)GetValue(BackTimeBetweenSlidesProperty); }
+            get { return (int)GetValue(BackTimeBetweenSlidesProperty); }
             set { SetValue(BackTimeBetweenSlidesProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for BackTimeBetweenSlides.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty BackTimeBetweenSlidesProperty =
-            DependencyProperty.Register("BackTimeBetweenSlides", typeof(double), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
+            DependencyProperty.Register("BackTimeBetweenSlides", typeof(int), typeof(RollOverTile), new PropertyMetadata(DEF_TIME_BETWEEN_SLIDES));
     
 
         public bool IsRandomTime

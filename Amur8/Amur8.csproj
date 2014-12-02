@@ -110,6 +110,10 @@
   <ItemGroup>
     <Compile Include="Animations\CountdownTimer\OpenCloseSettingsAnimation.cs" />
     <Compile Include="Animations\FlipTile\FlipAnimation.cs" />
+    <Compile Include="Animations\MovingImageButton\IMovingAnimation.cs" />
+    <Compile Include="Animations\MovingImageButton\MoveImageAnimation.cs" />
+    <Compile Include="Animations\MovingImageButton\ShrinkAnimation.cs" />
+    <Compile Include="Animations\MovingImageButton\TiltAnimation.cs" />
     <Compile Include="Animations\RollOverTile\BaseRollOverTileKeyFrames.cs" />
     <Compile Include="Animations\RollOverTile\IRollOverAnimation.cs" />
     <Compile Include="Animations\RollOverTile\LinearRollOverAnimation.cs" />
@@ -121,8 +125,10 @@
     <Compile Include="Controls\CountdownTimer\CountdownTimer.cs" />
     <Compile Include="Controls\CountdownTimer\CountdownTimerEventArgs.cs" />
     <Compile Include="Controls\FlipTile\FlipTile.cs" />
+    <Compile Include="Controls\MovingImageButton\MovingImageButton.cs" />
     <Compile Include="Controls\RollOverTile\RollOverTile.cs" />
     <Compile Include="Converters\AddZeroToNumberConverter.cs" />
+    <Compile Include="Helpers\Speed.cs" />
     <Compile Include="Helpers\TimeHelper.cs" />
     <Compile Include="Models\FlipDetails.cs" />
     <Compile Include="Models\TimeDetails.cs" />

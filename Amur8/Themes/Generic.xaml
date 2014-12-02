@@ -811,4 +811,46 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="local:MovingImageButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MovingImageButton">
+                    <Grid Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}">
+                        <Border x:Name="PART_MainBorder" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <Border.Projection>
+                                <PlaneProjection/>
+                            </Border.Projection>
+                            <Border.RenderTransform>
+                                <CompositeTransform />
+                            </Border.RenderTransform>
+                            <Grid x:Name="PART_MainGrid" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                <Canvas x:Name="MainCanvas" Canvas.ZIndex="-10">
+                                    <Image x:Name="PART_MainImage" 
+                                    VerticalAlignment="Stretch"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    HorizontalAlignment="Stretch"
+                                    Stretch="UniformToFill"
+                                    Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageWidth}"
+                                    Height="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageHeight}"
+                                    Source="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ImageSource}">
+                                        <Image.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Image.RenderTransform>
+                                    </Image>
+                                </Canvas>
+                            </Grid>
+                        </Border>
+                        <Grid x:Name="FrontGrid">
+                            <ContentPresenter x:Name="FrontPresenter"
+                                              Content="{TemplateBinding FrontContent}" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
