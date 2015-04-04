@@ -39,7 +39,7 @@ namespace Amur8.Animations
             _frontContent = frontContent;
             _backContent = backContent;
             _flipDetails = flipDetails;
-
+            
             CreateStoryboards();
         }
 

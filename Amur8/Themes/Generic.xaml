@@ -752,7 +752,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FlipTile">
-                    <Grid Width="{TemplateBinding Width}" IsTapEnabled="True"
+                    <Grid x:Name="PART_HoldingGrid" Width="{TemplateBinding Width}" IsTapEnabled="True"
                           Height="{TemplateBinding Height}">
                         
                         <Border x:Name="PART_Front" BorderBrush="{TemplateBinding BorderBrush}"

@@ -43,6 +43,11 @@ namespace Amur8.TestApp.CustomPages
             };
             this.DataContext = this;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            flip1.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
     }
 
     public class TileItem

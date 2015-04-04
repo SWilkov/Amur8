@@ -43,6 +43,7 @@ namespace Amur8.Controls
         private Random _random;
         private FlipTileAnimation _flipAnimation;
         private FlipDetails _flipDetails;
+        private bool _timerStarted = false;
 
         #endregion
 
@@ -51,31 +52,18 @@ namespace Amur8.Controls
         public new Brush Background { get; set; }
 
         #region constructor
-
+        
         public FlipTile()
         {
             this.DefaultStyleKey = typeof(FlipTile);
 
             #region events
-
+            
             this.Loaded += (s, args) =>
             {
-                ValidateFlipTime();
-                _flipAnimation = new FlipTileAnimation(FrontContentPresenter, BackContentPresenter,
-                                                        FlipTime, _flipDetails);
-
-                //use a seed to randomise the number
-                var randomSeed = (Int32)Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
-                _random = new Random(randomSeed);                
-
-                if (_timer != null)
+                if (this.Visibility == Windows.UI.Xaml.Visibility.Visible)
                 {
-                    _timer.Start();
-                }
-                else
-                {
-                    CreateTimer();
-                    _timer.Start();
+                    StartAnimationAndTimer();        
                 }
             };
 
@@ -90,7 +78,7 @@ namespace Amur8.Controls
                     _flipAnimation.sbCloseBack.Stop();
                 }
             };
-
+          
             this.Tapped += (s, args) =>
             {
 
@@ -101,6 +89,98 @@ namespace Amur8.Controls
         }
 
         #endregion
+
+        private void StartAnimationAndTimer()
+        {
+            ValidateFlipTime();
+            _flipAnimation = new FlipTileAnimation(FrontContentPresenter, BackContentPresenter,
+                                                    FlipTime, _flipDetails);
+
+            //use a seed to randomise the number
+            var randomSeed = (Int32)Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
+            _random = new Random(randomSeed);
+
+            if (_timer != null)
+            {
+                _timer.Start();
+                _timerStarted = true;
+            }
+            else
+            {
+                CreateTimer();
+                _timer.Start();
+            }
+        }
+
+        /// <summary>
+        /// The current visiblity of this user control.
+        /// </summary>
+        private Visibility _visibility;
+
+        /// <summary>
+        /// Gets or sets the visibility of a UIElement.
+        /// A UIElement that is not visible is not rendered and does not communicate its desired size to layout.
+        /// </summary>
+        /// <returns>A value of the enumeration. The default value is Visible.</returns>
+        public new Visibility Visibility
+        {
+            get { return _visibility; }
+            set
+            {
+                bool differ = false;
+                if (value != _visibility)
+                {
+                    _visibility = value;
+                    differ = true;
+                }
+              
+                base.Visibility = value;
+
+                if (differ)
+                {
+                    RaiseVisibilityChanged(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Raised when the <see cref="Visibility"/> property changes.
+        /// </summary>
+        public event EventHandler<VisibilityChangedEventArgs> VisibilityChanged;
+
+        /// <summary>
+        /// Raises the <see cref="VisibilityChanged"/> event of this command bar.
+        /// </summary>
+        /// <param name="visibility">The new visibility value.</param>
+        private void RaiseVisibilityChanged(Visibility visibility)
+        {           
+
+            if (VisibilityChanged != null)
+            {
+                VisibilityChanged(this, new VisibilityChangedEventArgs(visibility));
+            }
+        }
+
+        /// <summary>
+        /// Contains the arguments for the <see cref="SampleViewModel.VisibilityChanged"/> event.
+        /// </summary>
+        public sealed class VisibilityChangedEventArgs : EventArgs
+        {
+            /// <summary>
+            /// The new visibility.
+            /// </summary>
+            public Visibility NewVisibility { get; private set; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="VisibilityChangedEventArgs"/> class.
+            /// <param name="newVisibility">The new visibility.</param>
+            /// </summary>
+            public VisibilityChangedEventArgs(Visibility newVisibility)
+            {
+                this.NewVisibility = newVisibility;
+            }
+        }
+
 
         #region Dependency Properties
 
@@ -269,6 +349,9 @@ namespace Amur8.Controls
             SetPlaneProjection(Direction, BackContentPresenter);
 
             _flipDetails = SetFlipDetails(Direction);
+
+            if (this.Visibility == Windows.UI.Xaml.Visibility.Visible && _timerStarted == false)
+                StartAnimationAndTimer();
 
             base.OnApplyTemplate();
         }

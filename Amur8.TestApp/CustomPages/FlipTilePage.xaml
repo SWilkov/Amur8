@@ -17,7 +17,7 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Amur8:FlipTile Width="250" Height="200" DataContext="{Binding Tiles[0]}" 
+        <Amur8:FlipTile x:Name="flip1" Width="250" Height="200" DataContext="{Binding Tiles[0]}" 
                         MinimumFlipTime="3000"
                         MaximumFlipTime="10000">
             <Amur8:FlipTile.FrontContent>
@@ -84,7 +84,7 @@
             </Amur8:FlipTile.BackContent>
         </Amur8:FlipTile>
         
-        <Amur8:FlipTile Width="200" Height="200" Grid.Row="1" Grid.Column="1">
+        <Amur8:FlipTile Width="200" Height="200" Grid.Row="1" Grid.Column="1" >
             <Amur8:FlipTile.FrontContent>
                 <Grid Background="Red"></Grid>
             </Amur8:FlipTile.FrontContent>           
