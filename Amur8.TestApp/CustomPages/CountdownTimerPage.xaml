@@ -20,7 +20,7 @@
                                   EnableNotification="True"
                                   NotificationHeading="AmurTimer"
                                   NotificationBody="CountdownTimer has completed" 
-                                  OpenSettingsDirection="Down"
+                                  OpenSettingsDirection="Right"
                                   OpenSettingsDuration="1000"
                                   CloseSettingsDuration="1200" IsSlider="False"/>
         </Grid>

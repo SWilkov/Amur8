@@ -63,7 +63,7 @@ namespace Amur8.Controls
             {
                 if (this.Visibility == Windows.UI.Xaml.Visibility.Visible)
                 {
-                    StartAnimationAndTimer();        
+                    //StartAnimationAndTimer();        
                 }
             };
 
