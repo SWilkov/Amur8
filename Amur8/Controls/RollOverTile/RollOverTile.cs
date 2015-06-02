@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -49,6 +50,7 @@ namespace Amur8.Controls
         private TranslateTransform _backTransform;
 
         private DispatcherTimer _timer;
+        private Storyboard _sb;
         private Random _random;        
         private BaseRollOverTileKeyFrames _akf;
         private bool IsFront = false;
@@ -58,8 +60,10 @@ namespace Amur8.Controls
             this.DefaultStyleKey = typeof(RollOverTile);
 
             Loaded += (s, args) =>
-                {  
-                                SetDefaultPositions(Direction);
+                {
+                    this.Tapped += RollOverTile_Tapped;
+                   
+                    SetDefaultPositions(Direction);
 
                     //use a seed to randomise the number
                     var randomSeed = (Int32)Windows.Security.Cryptography.CryptographicBuffer.GenerateRandomNumber();
@@ -84,13 +88,18 @@ namespace Amur8.Controls
                 {
                     if (_timer != null)
                         _timer.Stop();
-                };
 
-            Tapped += (s, args) =>
-                {
-                    if (Command != null && Command.CanExecute(CommandParameter))
-                        Command.Execute(CommandParameter);
-                };
+                    if (_sb != null)
+                        _sb.Stop();
+
+                    this.Tapped -= RollOverTile_Tapped;                   
+                };            
+        }
+
+        void RollOverTile_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (Command != null && Command.CanExecute(CommandParameter))
+                Command.Execute(CommandParameter);
         }
 
         protected override void OnApplyTemplate()
@@ -99,8 +108,7 @@ namespace Amur8.Controls
             _frontGrid = this.GetTemplateChild(FRONT_GRID) as Grid;
             _backGrid = this.GetTemplateChild(BACK_GRID) as Grid;
             _frontTransform = this.GetTemplateChild(FRONT_TRANSFORM) as TranslateTransform;
-            _backTransform = this.GetTemplateChild(BACK_TRANSFORM) as TranslateTransform;  
-            
+            _backTransform = this.GetTemplateChild(BACK_TRANSFORM) as TranslateTransform;           
         }
 
         /// <summary>
@@ -119,7 +127,8 @@ namespace Amur8.Controls
             }                
             else
             {
-                var height = _frontGrid.Height - 1;
+                var height = _mainPanel.ActualHeight - 1;
+                //var height = _frontGrid.Height - 1;
                 margin.Top = -height;
                 _mainPanel.Orientation = Orientation.Vertical;
             }
@@ -178,9 +187,9 @@ namespace Amur8.Controls
 
             _timer.Tick += (s, args) =>
             {                
-                var sb = TileAnimation.GetStoryboard(_akf, _frontGrid, _frontTransform, 
+                _sb = TileAnimation.GetStoryboard(_akf, _frontGrid, _frontTransform, 
                                                         SlideTime, Direction, IsFront);
-                sb.Completed += (sender, e) =>
+                _sb.Completed += (sender, e) =>
                     {
                         if (IsFront)
                         {
@@ -196,7 +205,7 @@ namespace Amur8.Controls
                         }
                     };
 
-                sb.Begin();
+                _sb.Begin();
             };
         }
 

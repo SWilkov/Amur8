@@ -184,6 +184,7 @@ namespace Amur8.Controls
             this.DefaultStyleKey = typeof(CountdownTimer);
             this.Loaded += (s, args) =>
             {
+                RegisterEvents();
                 _openCloseAnimation = new OpenCloseSettingsAnimation();
 
                 SetArrowOpacity(OpenSettingsDirection);
@@ -201,6 +202,7 @@ namespace Amur8.Controls
 
             this.Unloaded += (s, args) =>
             {
+                DeRegisterEvents();
                 if (this.TimeHelper.LoadedCount > 1)
                     this.TimeHelper.TimerFinishedEvent -= OnTimeHelperFinished;
             };
@@ -318,149 +320,196 @@ namespace Amur8.Controls
                 _secondsCombo = this.GetTemplateChild(SECONDS_COMBO) as ComboBox;
             }
             UpdateSettingsGrid(false);
-            #endregion
+            #endregion          
 
+            base.OnApplyTemplate();
+        }
+
+        public void DeRegisterEvents()
+        {
+            if (_timerGrid != null)
+                _timerGrid.Tapped -= _timerGrid_Tapped;
+
+            if (_startTimer != null)
+                _startTimer.Click -= _startTimer_Click;
+
+            if (_pauseTimer != null)
+                _pauseTimer.Click -= _pauseTimer_Click;
+
+            if (_hoursSlider != null)
+                _hoursSlider.ValueChanged -= _hoursSlider_ValueChanged;
+
+            if (_minutesSlider != null)
+                _minutesSlider.ValueChanged -= _minutesSlider_ValueChanged;
+
+            if (_secondsSlider != null)
+                _secondsSlider.ValueChanged -= _secondsSlider_ValueChanged;
+
+            if (_hoursCombo != null)
+                _hoursCombo.SelectionChanged -= _hoursCombo_SelectionChanged;
+
+            if (_minutesCombo != null)
+                _minutesCombo.SelectionChanged -= _minutesCombo_SelectionChanged;
+
+            if (_secondsCombo != null)
+                _secondsCombo.SelectionChanged -= _secondsCombo_SelectionChanged;
+
+            if (_leftGlypgGrid != null)
+                _leftGlypgGrid.Tapped -= _leftGlypgGrid_Tapped;
+
+            if (_rightGlypgGrid != null)
+                _rightGlypgGrid.Tapped -= _rightGlypgGrid_Tapped;
+
+            if (_downGlypgGrid != null)
+                _downGlypgGrid.Tapped -= _downGlypgGrid_Tapped;
+
+            if (_upGlypgGrid != null)
+                _upGlypgGrid.Tapped -= _upGlypgGrid_Tapped;
+        }
+
+        public void RegisterEvents()
+        {
             #region Open & close settings event
 
             if (_timerGrid != null)
-            {
-                _timerGrid.Tapped += (s, args) =>
-                {
-                    if (_isSettingsOpen)
-                        CloseSettings();
-                    else
-                        OpenSettings();
-                };
-            }
-
+              _timerGrid.Tapped += _timerGrid_Tapped;
+            
             #endregion
 
             #region start & pause timer events
 
             if (_startTimer != null)
-            {
-                _startTimer.Click += (s, args) =>
-                {
-                    this.TimeHelper.StartTimer();
-
-                    if (this.TimeHelper.TimeDetails.Hours == 0 && this.TimeHelper.TimeDetails.Minutes == 0
-                        && this.TimeHelper.TimeDetails.Seconds == 0)
-                    {
-                    }
-                    else
-                    {
-                        ShowPauseButton();
-                        _startedTime = new TimeSpan(this.TimeHelper.TimeDetails.Hours, this.TimeHelper.TimeDetails.Minutes,
-                                                    this.TimeHelper.TimeDetails.Seconds);
-
-                        OnTimerStarted();
-                    }        
-                };
-            }
+              _startTimer.Click += _startTimer_Click;            
 
             if (_pauseTimer != null)
-            {
-                _pauseTimer.Click += (s, args) =>
-                {
-                    ShowStartButton();
-                    this.TimeHelper.PauseTimer();
-                    OnTimerPaused();   
-                };
-            }
-
+              _pauseTimer.Click += _pauseTimer_Click;
+            
             #endregion
 
             #region Slider changed events
 
             if (_hoursSlider != null)
-            {
-                _hoursSlider.ValueChanged += (s, args) =>
-                {
-                    this.TimeHelper.TimeDetails.Hours = Convert.ToInt32(_hoursSlider.Value);
-                };
-            }
-
+                _hoursSlider.ValueChanged += _hoursSlider_ValueChanged;
+            
             if (_minutesSlider != null)
-            {
-                _minutesSlider.ValueChanged += (s, args) =>
-                {
-                    this.TimeHelper.TimeDetails.Minutes = Convert.ToInt32(_minutesSlider.Value);
-                };
-            }
-
+                _minutesSlider.ValueChanged += _minutesSlider_ValueChanged;
+                
             if (_secondsSlider != null)
-            {
-                _secondsSlider.ValueChanged += (s, args) =>
-                {
-                    this.TimeHelper.TimeDetails.Seconds = Convert.ToInt32(_secondsSlider.Value);
-                };
-            }
+                _secondsSlider.ValueChanged += _secondsSlider_ValueChanged;
+                
             #endregion
 
             #region ComboBox changed events
 
             if (_hoursCombo != null)
-            {
-                _hoursCombo.SelectionChanged += (s, args) =>
-                    {
-                        this.TimeHelper.TimeDetails.Hours = Convert.ToInt32(_hoursCombo.SelectedItem);
-                    };
-            }
-
+                _hoursCombo.SelectionChanged += _hoursCombo_SelectionChanged;
+                
             if (_minutesCombo != null)
-            {
-                _minutesCombo.SelectionChanged += (s, args) =>
-                {
-                    this.TimeHelper.TimeDetails.Minutes = Convert.ToInt32(_minutesCombo.SelectedItem);
-                };
-            }
-
+                 _minutesCombo.SelectionChanged += _minutesCombo_SelectionChanged;
+                
             if (_secondsCombo != null)
-            {
-                _secondsCombo.SelectionChanged += (s, args) =>
-                {
-                    this.TimeHelper.TimeDetails.Seconds = Convert.ToInt32(_secondsCombo.SelectedItem);
-                };
-            }            
+                _secondsCombo.SelectionChanged += _secondsCombo_SelectionChanged;
+                
             #endregion
 
             #region Arrow grid events
 
             if (_leftGlypgGrid != null)
-            {
-                _leftGlypgGrid.Tapped += (s, args) =>
-                {
-                    CloseSettings();
-                };
-            }
-
+                _leftGlypgGrid.Tapped += _leftGlypgGrid_Tapped;
+                
             if (_rightGlypgGrid != null)
-            {
-                _rightGlypgGrid.Tapped += (s, args) =>
-                {
-                    CloseSettings();
-                };
-            }
-
+                _rightGlypgGrid.Tapped += _rightGlypgGrid_Tapped;
+                
             if (_upGlypgGrid != null)
-            {
-                _upGlypgGrid.Tapped += (s, args) =>
-                {
-                    CloseSettings();
-                };
-            }
-
+                _upGlypgGrid.Tapped += _upGlypgGrid_Tapped;
+                
             if (_downGlypgGrid != null)
-            {
-                _downGlypgGrid.Tapped += (s, args) =>
-                {
-                    CloseSettings();
-                };
-            }
-
+                _downGlypgGrid.Tapped += _downGlypgGrid_Tapped;
+                
             #endregion
+        }
 
-            base.OnApplyTemplate();
+        void _downGlypgGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseSettings();
+        }
+
+        void _upGlypgGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseSettings();
+        }
+
+        void _rightGlypgGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseSettings();
+        }
+
+        void _leftGlypgGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseSettings();
+        }
+
+        void _secondsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Seconds = Convert.ToInt32(_secondsCombo.SelectedItem);
+        }
+
+        void _minutesCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Minutes = Convert.ToInt32(_minutesCombo.SelectedItem);
+        }
+
+        void _hoursCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Hours = Convert.ToInt32(_hoursCombo.SelectedItem);
+        }
+
+        void _secondsSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Seconds = Convert.ToInt32(_secondsSlider.Value);
+        }
+
+        void _minutesSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Minutes = Convert.ToInt32(_minutesSlider.Value);
+        }
+
+        void _hoursSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            this.TimeHelper.TimeDetails.Hours = Convert.ToInt32(_hoursSlider.Value);
+        }
+
+        void _pauseTimer_Click(object sender, RoutedEventArgs e)
+        {
+            ShowStartButton();
+            this.TimeHelper.PauseTimer();
+            OnTimerPaused();
+        }
+
+        void _startTimer_Click(object sender, RoutedEventArgs e)
+        {
+            this.TimeHelper.StartTimer();
+
+            if (this.TimeHelper.TimeDetails.Hours == 0 && this.TimeHelper.TimeDetails.Minutes == 0
+                && this.TimeHelper.TimeDetails.Seconds == 0)
+            {
+            }
+            else
+            {
+                ShowPauseButton();
+                _startedTime = new TimeSpan(this.TimeHelper.TimeDetails.Hours, this.TimeHelper.TimeDetails.Minutes,
+                                            this.TimeHelper.TimeDetails.Seconds);
+
+                OnTimerStarted();
+            }
+        }
+
+        void _timerGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (_isSettingsOpen)
+                CloseSettings();
+            else
+                OpenSettings();
         }
 
         #region Show and hide start/pause buttons

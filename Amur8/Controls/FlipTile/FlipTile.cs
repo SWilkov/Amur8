@@ -61,14 +61,13 @@ namespace Amur8.Controls
             
             this.Loaded += (s, args) =>
             {
-                if (this.Visibility == Windows.UI.Xaml.Visibility.Visible)
-                {
-                    //StartAnimationAndTimer();        
-                }
+                this.Tapped += FlipTile_Tapped; 
             };
 
             this.Unloaded += (s, args) =>
             {
+                this.Tapped -= FlipTile_Tapped;
+
                 if (_timer != null)
                 {
                     _timer.Stop();
@@ -77,15 +76,15 @@ namespace Amur8.Controls
                     _flipAnimation.sbCloseFront.Stop();
                     _flipAnimation.sbCloseBack.Stop();
                 }
-            };
-          
-            this.Tapped += (s, args) =>
-            {
-
-                if (Command != null && Command.CanExecute(CommandParameter))
-                    this.Command.Execute(CommandParameter);
-            };
+            };          
+            
             #endregion
+        }
+
+        void FlipTile_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if (Command != null && Command.CanExecute(CommandParameter))
+                this.Command.Execute(CommandParameter);
         }
 
         #endregion
