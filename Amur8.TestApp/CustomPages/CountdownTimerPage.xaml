@@ -16,10 +16,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Amur8:CountdownTimer FontSize="25" 
-                                  EnableNotification="True"
-                                  NotificationHeading="AmurTimer"
-                                  NotificationBody="CountdownTimer has completed" 
+            <Amur8:CountdownTimer FontSize="25"                                  
                                   OpenSettingsDirection="Right"
                                   OpenSettingsDuration="1000"
                                   CloseSettingsDuration="1200" IsSlider="False"/>

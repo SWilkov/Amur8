@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Amur8.Animations;
 using Windows.UI.Notifications;
-using NotificationsExtensions.ToastContent;
 using Amur8.Events;
 using Amur8.Models;
 using System.ComponentModel;
@@ -126,9 +125,7 @@ namespace Amur8.Controls
 
         public const int MAX_HOURS = 12;
 
-        //Notification Defaults
-        public const string NOTIFY_HEADER = "Timer";
-        public const string NOTIFY_TEXT = "timer has finished";
+       
 
         private int[] _hours = new int[] { 0, 1, 2, 3, 4, 5, 6 };
         public int[] Hours
@@ -229,10 +226,7 @@ namespace Amur8.Controls
         private void OnTimeHelperFinished(object sender, EventArgs e)
         {
             ShowStartButton();
-            //Display Notification if EnableNotfication is true
-            if (EnableNotification)
-                DisplayNotification();
-
+          
             OnTimerFinished();
         }
 
@@ -690,37 +684,6 @@ namespace Amur8.Controls
                                         new PropertyMetadata(DEFAULT_OPENCLOSE_TIME));
         #endregion
 
-        #region Notification properties & methods
-
-        public bool EnableNotification
-        {
-            get { return (bool)GetValue(EnableNotificationProperty); }
-            set { SetValue(EnableNotificationProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for EnableNotification.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty EnableNotificationProperty =
-            DependencyProperty.Register("EnableNotification",
-                                        typeof(bool),
-                                        typeof(CountdownTimer),
-                                        new PropertyMetadata(false));
-
-
-        public string NotificationHeading
-        {
-            get { return (string)GetValue(NotificationHeadingProperty); }
-            set { SetValue(NotificationHeadingProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for NotificationHeading.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty NotificationHeadingProperty =
-            DependencyProperty.Register("NotificationHeading",
-                                        typeof(string),
-                                        typeof(CountdownTimer),
-                                        new PropertyMetadata(NOTIFY_HEADER));
-
-
-
         public bool IsSlider
         {
             get { return (bool)GetValue(IsSliderProperty); }
@@ -730,37 +693,6 @@ namespace Amur8.Controls
         // Using a DependencyProperty as the backing store for IsSlider.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsSliderProperty =
             DependencyProperty.Register("IsSlider", typeof(bool), typeof(CountdownTimer), new PropertyMetadata(false));
-
-        
-
-        public string NotificationBody
-        {
-            get { return (string)GetValue(NotificationBodyProperty); }
-            set { SetValue(NotificationBodyProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for NotificationBody.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty NotificationBodyProperty =
-            DependencyProperty.Register("NotificationBody",
-                                        typeof(string),
-                                        typeof(CountdownTimer),
-                                        new PropertyMetadata(NOTIFY_TEXT));      
-
-        
-
-
-        private void DisplayNotification()
-        {
-            IToastText02 toast = ToastContentFactory.CreateToastText02();
-            toast.TextHeading.Text = NotificationHeading;
-            toast.TextBodyWrap.Text = NotificationBody;
-            toast.Duration = ToastDuration.Long;
-            toast.Audio.Loop = false;
-
-            _timerFinishedNotification = toast.CreateNotification();
-            ToastNotificationManager.CreateToastNotifier().Show(_timerFinishedNotification);
-        }
-
-        #endregion
+       
     }
 }
